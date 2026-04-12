@@ -1,0 +1,433 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:8px 0 24px}
+.meta{font-size:10px;color:var(--color-text-tertiary);letter-spacing:.06em;margin-bottom:4px}
+.title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.sub{font-size:11px;color:var(--color-text-tertiary);margin-bottom:14px}
+.ctx-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 12px;border-radius:10px;border:.5px solid var(--color-border-secondary);background:var(--color-background-secondary);margin-bottom:16px}
+.ctx-label{font-size:11px;color:var(--color-text-tertiary);font-weight:500}
+.cb{padding:4px 12px;border-radius:16px;border:.5px solid var(--color-border-secondary);background:transparent;font-size:11px;cursor:pointer;color:var(--color-text-secondary);transition:all .15s}
+.cb.active{background:#EEEDFE;border-color:#534AB7;color:#3C3489;font-weight:500}
+.ctx-desc{font-size:10px;color:var(--color-text-tertiary);margin-top:6px;padding:6px 10px;border-radius:6px;border-left:2px solid #534AB7;background:#EEEDFE22}
+.step{border-radius:10px;border:.5px solid var(--color-border-tertiary);margin-bottom:10px;overflow:hidden}
+.step-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none}
+.step-hdr:hover{background:var(--color-background-secondary)}
+.step-num{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.step-title{font-size:12px;font-weight:500;color:var(--color-text-primary);flex:1}
+.step-badge{font-size:9px;padding:2px 8px;border-radius:8px;font-weight:500}
+.step-chev{font-size:10px;color:var(--color-text-tertiary);transition:transform .2s}
+.step-chev.open{transform:rotate(180deg)}
+.step-body{padding:0 14px 12px;display:none}
+.step-body.open{display:block}
+.s1 .step-num{background:#F1EFE8;color:#444441} .s1 .step-badge{background:#F1EFE8;color:#444441}
+.s2 .step-num{background:#E1F5EE;color:#085041} .s2 .step-badge{background:#E1F5EE;color:#085041}
+.s3 .step-num{background:#E6F1FB;color:#0C447C} .s3 .step-badge{background:#E6F1FB;color:#0C447C}
+.s4 .step-num{background:#EEEDFE;color:#3C3489} .s4 .step-badge{background:#EEEDFE;color:#3C3489}
+.s5 .step-num{background:#FAEEDA;color:#633806} .s5 .step-badge{background:#FAEEDA;color:#633806}
+.s6 .step-num{background:#EAF3DE;color:#27500A} .s6 .step-badge{background:#EAF3DE;color:#27500A}
+.s7 .step-num{background:#FBEAF0;color:#72243E} .s7 .step-badge{background:#FBEAF0;color:#72243E}
+.q-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:10px}
+.q-card{border-radius:8px;padding:8px 10px;border:.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.q-num{font-size:9px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:2px}
+.q-text{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.q-ref{font-size:10px;color:var(--color-text-tertiary)}
+.ctx-block{border-radius:8px;padding:10px 12px;border-left:3px solid #534AB7;background:#EEEDFE22;margin-bottom:8px}
+.ctx-block-title{font-size:10px;font-weight:500;color:#3C3489;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.ctx-line{font-size:10px;color:var(--color-text-secondary);line-height:1.6;padding:1px 0}
+.ctx-line::before{content:"→ ";color:#534AB7;font-size:9px}
+.gap-tbl{width:100%;border-collapse:collapse;font-size:10px;margin-top:8px}
+.gap-tbl th{padding:5px 8px;text-align:left;font-weight:500;font-size:9px;background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.gap-tbl td{padding:5px 8px;border:.5px solid var(--color-border-tertiary);vertical-align:top;font-size:10px;color:var(--color-text-secondary)}
+.badge{display:inline-block;padding:1px 7px;border-radius:8px;font-size:9px;font-weight:500}
+.b-miss{background:#FCEBEB;color:#791F1F}
+.b-part{background:#FAEEDA;color:#633806}
+.b-yes{background:#EAF3DE;color:#27500A}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.chain-node{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:500;border:.5px solid var(--color-border-secondary)}
+.chain-arr{font-size:10px;color:var(--color-text-tertiary)}
+.cn-csf{background:#E6F1FB;color:#0C447C;border-color:#185FA5}
+.cn-171{background:#E1F5EE;color:#085041;border-color:#0F6E56}
+.cn-53{background:#FAEEDA;color:#633806;border-color:#854F0B}
+.cn-iso{background:#EEEDFE;color:#3C3489;border-color:#534AB7}
+.cn-local{background:#EAF3DE;color:#27500A;border-color:#3B6D11}
+.divider{height:.5px;background:var(--color-border-tertiary);margin:10px 0}
+.note{font-size:10px;color:var(--color-text-tertiary);font-style:italic;margin-top:6px}
+.flow-connector{text-align:center;font-size:10px;color:var(--color-text-tertiary);margin:2px 0 2px;letter-spacing:.04em}
+.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px}
+.profile-card{border-radius:8px;padding:8px 10px;border:.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.profile-label{font-size:9px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.profile-val{font-size:11px;color:var(--color-text-primary);font-weight:500}
+.profile-sub{font-size:9px;color:var(--color-text-tertiary);margin-top:2px}
+</style>
+
+<div class="wrap">
+<div class="meta">Contextual security requirements methodology — master reference v2</div>
+<div class="title">7-step security requirements framework</div>
+<div class="sub">Context-adaptive · Not one-size-fits-all · Corrected logical sequence · Revisit whenever emphasis changes</div>
+
+<div class="ctx-bar">
+  <span class="ctx-label">Active emphasis:</span>
+  <button class="cb active" onclick="setCtx('ext',this)">External influence</button>
+  <button class="cb" onclick="setCtx('ins',this)">Insider threat</button>
+  <button class="cb" onclick="setCtx('sup',this)">Supply chain</button>
+  <button class="cb" onclick="setCtx('reg',this)">Regulatory compliance</button>
+  <button class="cb" onclick="setCtx('phy',this)">Physical security</button>
+  <div id="ctx-desc" class="ctx-desc" style="width:100%">
+    Current focus: externally-orchestrated influence on workforce, culture, regulatory posture — spans A.5 Organizational · A.6 People · A.7 Physical · A.8 Technological
+  </div>
+</div>
+
+<!-- STEP 1 — Organisation profile (NEW — was missing entirely) -->
+<div class="step s1">
+  <div class="step-hdr" onclick="tog(1)">
+    <div class="step-num">1</div>
+    <div class="step-title">Organisation profile — establish context before anything else</div>
+    <span class="step-badge">Who are we · Where · What sector</span>
+    <span class="step-chev" id="chev1">▼</span>
+  </div>
+  <div class="step-body" id="body1">
+    <div class="divider"></div>
+    <p style="font-size:10px;color:var(--color-text-tertiary);margin-bottom:10px">Every organisation is different. Sector, geography, culture, legal jurisdiction, workforce demographics, threat landscape and regulatory obligations all shape which controls matter. This step grounds the entire methodology before any framework is applied.</p>
+    <div class="profile-grid">
+      <div class="profile-card"><div class="profile-label">Sector</div><div class="profile-val" id="p-sector">Health &amp; social services</div><div class="profile-sub">Drives LRSSS · LSSS obligations</div></div>
+      <div class="profile-card"><div class="profile-label">Jurisdiction</div><div class="profile-val" id="p-juris">Quebec, Canada</div><div class="profile-sub">Law 25 · LRSSS · PIPEDA</div></div>
+      <div class="profile-card"><div class="profile-label">Workforce profile</div><div class="profile-val" id="p-work">Diverse · Multilingual</div><div class="profile-sub">Demographics shape A.6 exposure</div></div>
+      <div class="profile-card"><div class="profile-label">Threat landscape</div><div class="profile-val" id="p-threat">External influence</div><div class="profile-sub">Active emphasis — today</div></div>
+      <div class="profile-card"><div class="profile-label">Regulatory posture</div><div class="profile-val" id="p-reg">Partial compliance</div><div class="profile-sub">Law 25 partially implemented</div></div>
+      <div class="profile-card"><div class="profile-label">Cultural context</div><div class="profile-val" id="p-cult">Local norms at risk</div><div class="profile-sub">Adversarial culture erosion noted</div></div>
+    </div>
+    <div id="ctx1" class="ctx-block">
+      <div class="ctx-block-title">External influence — profile signals</div>
+      <div class="ctx-line">Sector: health and social services — high-value target for external actors seeking data or operational disruption</div>
+      <div class="ctx-line">Jurisdiction: Quebec Law 25 and LRSSS impose obligations not present in NIST or ISO frameworks</div>
+      <div class="ctx-line">Workforce: diverse multilingual teams create uneven awareness of social engineering and elicitation tactics</div>
+      <div class="ctx-line">Cultural context: externally-motivated cultural erosion constitutes an A.5.7 threat intelligence gap in most orgs</div>
+    </div>
+    <p class="note">This profile is the input that makes every subsequent step organisation-specific rather than generic</p>
+  </div>
+</div>
+
+<div class="flow-connector">↓ profile established — now run intelligence cycle within this context</div>
+
+<!-- STEP 2 — ACD cycle (was Step 1) -->
+<div class="step s2">
+  <div class="step-hdr" onclick="tog(2)">
+    <div class="step-num">2</div>
+    <div class="step-title">Intelligence inputs → ACD cycle → adversary understanding</div>
+    <span class="step-badge">ACD → NIST CSF</span>
+    <span class="step-chev" id="chev2">▼</span>
+  </div>
+  <div class="step-body" id="body2">
+    <div class="divider"></div>
+    <div class="q-row">
+      <div class="q-card"><div class="q-num">Tool</div><div class="q-text">ACD intelligence cycle</div><div class="q-ref">Consume → Find → Monitor → IR → TI Analysis</div></div>
+      <div class="q-card"><div class="q-num">Output</div><div class="q-text">Adversary understanding</div><div class="q-ref">Intent · Opportunities · Capabilities</div></div>
+      <div class="q-card"><div class="q-num">Maps to</div><div class="q-text">NIST CSF IPDRR</div><div class="q-ref">ID · PR · DE · RS · RC correlated to IOC lenses</div></div>
+    </div>
+    <div id="ctx2" class="ctx-block">
+      <div class="ctx-block-title">External influence emphasis</div>
+      <div class="ctx-line">Intent: who is motivated to destabilize this org's regulatory posture or workforce cohesion?</div>
+      <div class="ctx-line">Opportunities: what access points exist — workforce demographics, remote work, third parties?</div>
+      <div class="ctx-line">Capabilities: social engineering, elicitation, insider cultivation, propaganda distribution</div>
+      <div class="ctx-line">Feeds: ID.RA-02 (threat sources) · ID.RA-04 (threat intelligence) · GV.OC-03 (legal context)</div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-connector">↓ adversary understood — now apply the core assessment questions</div>
+
+<!-- STEP 3 — Three-question model (was Step 3, stays Step 3) -->
+<div class="step s3">
+  <div class="step-hdr" onclick="tog(3)">
+    <div class="step-num">3</div>
+    <div class="step-title">Three-question model — core assessment logic</div>
+    <span class="step-badge">CSF 2.0 + 800-171 + 800-53</span>
+    <span class="step-chev" id="chev3">▼</span>
+  </div>
+  <div class="step-body" id="body3">
+    <div class="divider"></div>
+    <div class="q-row">
+      <div class="q-card"><div class="q-num">Q1 — Are we managing the risk?</div><div class="q-text">CSF 2.0</div><div class="q-ref">GV.OC · GV.RM · ID.RA · ID.IM</div></div>
+      <div class="q-card"><div class="q-num">Q2 — What must be done?</div><div class="q-text">Info sec policy</div><div class="q-ref">Policy-level interpretation bridge</div></div>
+      <div class="q-card"><div class="q-num">Q3 — What must we implement?</div><div class="q-text">NIST 800-171 Rev.3</div><div class="q-ref">03.11 · 03.13 · 03.14 requirements</div></div>
+      <div class="q-card"><div class="q-num">Q4 — How do we implement it?</div><div class="q-text">NIST 800-53 Rev.5</div><div class="q-ref">PM-12 · AT-2 · PL-4 · SI-12 controls</div></div>
+    </div>
+    <div id="ctx3" class="ctx-block">
+      <div class="ctx-block-title">External influence emphasis</div>
+      <div class="ctx-line">Q1: Does GV.RM acknowledge externally-orchestrated insider threat as a risk category?</div>
+      <div class="ctx-line">Q2: Does the information security policy define "external influence" as an adverse behavior?</div>
+      <div class="ctx-line">Q3: 800-171 03.14.07 — insider threat awareness program required</div>
+      <div class="ctx-line">Q4: 800-53 PM-12 insider threat program · AT-2 influence recognition training · PL-4 rules of behavior</div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-connector">↓ controls identified — now map them across all frameworks in one unified chain</div>
+
+<!-- STEP 4 — Unified cross-framework mapping (was Steps 4 + 5 merged) -->
+<div class="step s4">
+  <div class="step-hdr" onclick="tog(4)">
+    <div class="step-num">4</div>
+    <div class="step-title">Unified cross-framework mapping — CSF 2.0 ↔ 800-171 ↔ 800-53 ↔ ISO 27001</div>
+    <span class="step-badge">Full framework chain</span>
+    <span class="step-chev" id="chev4">▼</span>
+  </div>
+  <div class="step-body" id="body4">
+    <div class="divider"></div>
+    <div class="chain">
+      <span class="chain-node cn-csf">CSF 2.0</span>
+      <span class="chain-arr">⟷</span>
+      <span class="chain-node cn-171">800-171 Rev.3</span>
+      <span class="chain-arr">⟷</span>
+      <span class="chain-node cn-53">800-53 Rev.5</span>
+      <span class="chain-arr">⟷</span>
+      <span class="chain-node cn-iso">ISO 27001:2022</span>
+    </div>
+    <div id="ctx4" class="ctx-block">
+      <div class="ctx-block-title">External influence — full chain mappings</div>
+      <div class="ctx-line">CSF GV.OC-03 → 800-171 03.11.01 → 800-53 RA-03 → ISO A.5.7 (threat intelligence)</div>
+      <div class="ctx-line">CSF ID.RA-02 → 800-171 03.11.03 → 800-53 RA-05 → ISO A.5.19 (supplier relationships)</div>
+      <div class="ctx-line">CSF PR.AT-01 → 800-171 03.02.02 → 800-53 AT-02 → ISO A.6.3 (awareness training)</div>
+      <div class="ctx-line">CSF DE.CM-03 → 800-171 03.14.07 → 800-53 PM-12 → ISO A.6.4 (disciplinary process)</div>
+      <div class="ctx-line">CSF RS.AN-08 → 800-171 03.06.01 → 800-53 IR-04 → ISO A.8.16 (monitoring activities)</div>
+    </div>
+    <p class="note">Reference: NIST cross-framework mapping spreadsheets (csf.tools · nvd.nist.gov) · 800-53 Rev.5 to ISO 27001:2022 mapping (nvd.nist.gov)</p>
+  </div>
+</div>
+
+<div class="flow-connector">↓ framework chain complete — now assign each control to its ISO Annex A domain</div>
+
+<!-- STEP 5 — ISO Annex A domain assignment (was Step 2, now correctly Step 5) -->
+<div class="step s5">
+  <div class="step-hdr" onclick="tog(5)">
+    <div class="step-num">5</div>
+    <div class="step-title">ISO 27001 Annex A domain assignment — situate controls in A.5 · A.6 · A.7 · A.8</div>
+    <span class="step-badge">Annex A refinement</span>
+    <span class="step-chev" id="chev5">▼</span>
+  </div>
+  <div class="step-body" id="body5">
+    <div class="divider"></div>
+    <p style="font-size:10px;color:var(--color-text-tertiary);margin-bottom:10px">This step is a refinement of Step 4 — not a standalone jump. Controls identified and mapped in Step 4 are now assigned to their Annex A domain so that the right team owns the right control.</p>
+    <div class="q-row">
+      <div class="q-card"><div class="q-num">A.5 — Organizational</div><div class="q-text">Govern &amp; define</div><div class="q-ref">A.5.7 TI · A.5.19 suppliers · A.5.1 policies</div></div>
+      <div class="q-card"><div class="q-num">A.6 — People</div><div class="q-text">Entry &amp; spread</div><div class="q-ref">A.6.1 screening · A.6.3 training · A.6.4 discipline</div></div>
+      <div class="q-card"><div class="q-num">A.7 — Physical</div><div class="q-text">Space manifestation</div><div class="q-ref">A.7.2 entry · A.7.4 monitoring · A.7.7 clean desk</div></div>
+      <div class="q-card"><div class="q-num">A.8 — Technological</div><div class="q-text">Evidence &amp; detection</div><div class="q-ref">A.8.16 monitoring · A.8.12 DLP · A.8.2 access</div></div>
+    </div>
+    <div id="ctx5" class="ctx-block">
+      <div class="ctx-block-title">External influence — Annex A domain gaps</div>
+      <div class="ctx-line">A.5.7: TI program covers technical IOCs only — human/cultural influence vectors absent (primary gap)</div>
+      <div class="ctx-line">A.6.3: awareness training omits social engineering from state or corporate actors</div>
+      <div class="ctx-line">A.7.4: physical monitoring does not account for coordinated presence or workspace surveillance</div>
+      <div class="ctx-line">A.8.16: monitoring lacks behavioral baselines for influence-driven anomalous activity</div>
+      <div class="ctx-line">PM-12 → A.6.1 + A.6.3 + A.6.4 · AT-02 → A.6.3 + A.5.7 · PL-04 → A.6.2 + A.5.1 · PE-03 → A.7.2 + A.7.4</div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-connector">↓ domains assigned — now produce the gap analysis deliverable</div>
+
+<!-- STEP 6 — Gap analysis (same position, now logically arrived at) -->
+<div class="step s6">
+  <div class="step-hdr" onclick="tog(6)">
+    <div class="step-num">6</div>
+    <div class="step-title">Gap analysis — three-layer output table</div>
+    <span class="step-badge">CSF · 800-171 · 800-53 · ISO</span>
+    <span class="step-chev" id="chev6">▼</span>
+  </div>
+  <div class="step-body" id="body6">
+    <div class="divider"></div>
+    <div class="q-row" style="margin-bottom:8px">
+      <div class="q-card"><div class="q-num">Layer 1</div><div class="q-text">CSF gaps</div><div class="q-ref">Which outcomes are unmet?</div></div>
+      <div class="q-card"><div class="q-num">Layer 2</div><div class="q-text">800-171 gaps</div><div class="q-ref">Which requirements are unimplemented?</div></div>
+      <div class="q-card"><div class="q-num">Layer 3</div><div class="q-text">800-53 gaps</div><div class="q-ref">Which controls are missing or partial?</div></div>
+    </div>
+    <table class="gap-tbl">
+      <thead>
+        <tr>
+          <th>CSF outcome</th>
+          <th>800-171</th>
+          <th>800-53</th>
+          <th>ISO Annex A</th>
+          <th>Status</th>
+          <th>Gap description</th>
+        </tr>
+      </thead>
+      <tbody id="gapbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="flow-connector">↓ gaps documented — now close what international frameworks cannot cover</div>
+
+<!-- STEP 7 — Local jurisdiction (same position, now properly the final grounding layer) -->
+<div class="step s7">
+  <div class="step-hdr" onclick="tog(7)">
+    <div class="step-num">7</div>
+    <div class="step-title">Local jurisdiction — close residual gaps NIST and ISO cannot cover</div>
+    <span class="step-badge">Quebec Law 25 · LRSSS · local context</span>
+    <span class="step-chev" id="chev7">▼</span>
+  </div>
+  <div class="step-body" id="body7">
+    <div class="divider"></div>
+    <div class="chain">
+      <span class="chain-node cn-iso">ISO 27001</span>
+      <span class="chain-arr">+</span>
+      <span class="chain-node cn-53">800-53</span>
+      <span class="chain-arr">+</span>
+      <span class="chain-node cn-local">Quebec Law 25</span>
+      <span class="chain-arr">+</span>
+      <span class="chain-node cn-local">LRSSS (Loi 5)</span>
+      <span class="chain-arr">→</span>
+      <span class="chain-node" style="background:#FBEAF0;color:#72243E;border-color:#993556">Best control</span>
+    </div>
+    <div id="ctx7" class="ctx-block" style="margin-top:10px">
+      <div class="ctx-block-title">External influence — local jurisdiction gaps not covered by NIST/ISO</div>
+      <div class="ctx-line">Quebec Law 25: privacy officer required · breach notification within 72hrs · PIA mandatory for high-risk processing</div>
+      <div class="ctx-line">Law 25: explicit consent required for behavioral monitoring — any external influence detection program requires PIA</div>
+      <div class="ctx-line">LRSSS (Loi 5, in force July 2024): health orgs must report anticipated confidentiality incidents — proactive obligation beyond NIST/ISO</div>
+      <div class="ctx-line">LRSSS: annual access audit + mandatory staff training on health information protection (intersects A.6.3 and PM-12)</div>
+      <div class="ctx-line">Local gap: no federal framework mandates a workforce cultural integrity monitoring program — Law 25 + A.5.7 hybrid requirement</div>
+      <div class="ctx-line">Recommended: internal PIR program covering behavioral indicators, mapped to Law 25 breach conditions and LRSSS proactive reporting obligations</div>
+    </div>
+    <p class="note">Step 7 feeds back into Step 1 — update the organisation profile and re-run. This is a continuous loop, not a one-time exercise.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+const ctxData={
+  ext:{desc:'Current focus: externally-orchestrated influence on workforce, culture, regulatory posture — spans A.5 Organizational · A.6 People · A.7 Physical · A.8 Technological',
+    p:{sector:'Health & social services',juris:'Quebec, Canada',work:'Diverse · Multilingual',threat:'External influence',reg:'Partial compliance',cult:'Local norms at risk'},
+    gaps:[
+      {csf:'GV.OC-03',n171:'03.11.01',n53:'RA-03',iso:'A.5.7',st:'miss',gap:'No TI program covering human or cultural influence vectors'},
+      {csf:'GV.RM-06',n171:'03.11.03',n53:'RA-03',iso:'A.5.1',st:'part',gap:'Risk register does not include external influence as a risk category'},
+      {csf:'PR.AT-01',n171:'03.02.02',n53:'AT-02',iso:'A.6.3',st:'miss',gap:'Awareness training omits social engineering from state and corporate actors'},
+      {csf:'DE.CM-03',n171:'03.14.07',n53:'PM-12',iso:'A.6.4',st:'miss',gap:'No insider threat program; no behavioral baseline for influence indicators'},
+      {csf:'ID.RA-02',n171:'03.11.03',n53:'RA-05',iso:'A.5.19',st:'part',gap:'Supplier risk assessment informal; external actor access undocumented'},
+      {csf:'RS.AN-08',n171:'03.06.01',n53:'IR-04',iso:'A.8.16',st:'miss',gap:'Incident analysis lacks external influence attribution capability'},
+    ],
+    ctx:{
+      2:'<div class="ctx-block-title">External influence emphasis</div><div class="ctx-line">Intent: who is motivated to destabilize this org\'s regulatory posture or workforce cohesion?</div><div class="ctx-line">Opportunities: access points — workforce demographics, remote work, third parties</div><div class="ctx-line">Capabilities: social engineering, elicitation, insider cultivation, propaganda distribution</div><div class="ctx-line">Feeds: ID.RA-02 · ID.RA-04 · GV.OC-03</div>',
+      3:'<div class="ctx-block-title">External influence emphasis</div><div class="ctx-line">Q1: Does GV.RM acknowledge externally-orchestrated insider threat as a risk category?</div><div class="ctx-line">Q2: Does the information security policy define "external influence" as adverse behavior?</div><div class="ctx-line">Q3: 800-171 03.14.07 — insider threat awareness program required</div><div class="ctx-line">Q4: 800-53 PM-12 · AT-2 influence recognition training · PL-4 rules of behavior</div>',
+      4:'<div class="ctx-block-title">External influence — full chain mappings</div><div class="ctx-line">CSF GV.OC-03 → 800-171 03.11.01 → 800-53 RA-03 → ISO A.5.7 (threat intelligence)</div><div class="ctx-line">CSF ID.RA-02 → 800-171 03.11.03 → 800-53 RA-05 → ISO A.5.19 (supplier relationships)</div><div class="ctx-line">CSF PR.AT-01 → 800-171 03.02.02 → 800-53 AT-02 → ISO A.6.3 (awareness training)</div><div class="ctx-line">CSF DE.CM-03 → 800-171 03.14.07 → 800-53 PM-12 → ISO A.6.4 (disciplinary process)</div><div class="ctx-line">CSF RS.AN-08 → 800-171 03.06.01 → 800-53 IR-04 → ISO A.8.16 (monitoring activities)</div>',
+      5:'<div class="ctx-block-title">External influence — Annex A domain gaps</div><div class="ctx-line">A.5.7: TI program covers technical IOCs only — human/cultural influence vectors absent (primary gap)</div><div class="ctx-line">A.6.3: awareness training omits social engineering from state or corporate actors</div><div class="ctx-line">A.7.4: physical monitoring does not account for coordinated presence or workspace surveillance</div><div class="ctx-line">A.8.16: monitoring lacks behavioral baselines for influence-driven anomalous activity</div><div class="ctx-line">PM-12 → A.6.1 + A.6.3 + A.6.4 · AT-02 → A.6.3 + A.5.7 · PL-04 → A.6.2 + A.5.1 · PE-03 → A.7.2 + A.7.4</div>',
+      7:'<div class="ctx-block-title">External influence — local jurisdiction gaps</div><div class="ctx-line">Quebec Law 25: PIA mandatory for high-risk processing involving workforce data collection</div><div class="ctx-line">Law 25: explicit consent required for behavioral monitoring programs</div><div class="ctx-line">LRSSS (Loi 5): proactive incident reporting obligation — must report anticipated confidentiality incidents</div><div class="ctx-line">Local gap: no federal framework mandates a workforce cultural integrity monitoring program</div><div class="ctx-line">Recommended: internal PIR program covering behavioral indicators mapped to Law 25 and LRSSS obligations</div>'
+    }
+  },
+  ins:{desc:'Current focus: trusted insiders acting maliciously or negligently — spans A.6 People · A.8 Technological controls',
+    p:{sector:'Any sector',juris:'Quebec / Canada',work:'Privileged users',threat:'Insider threat',reg:'Partial',cult:'Trust-based culture'},
+    gaps:[
+      {csf:'DE.CM-03',n171:'03.14.07',n53:'PM-12',iso:'A.6.4',st:'miss',gap:'No formal insider threat program or multidisciplinary team'},
+      {csf:'PR.AA-05',n171:'03.01.05',n53:'AC-06',iso:'A.8.2',st:'part',gap:'Least privilege not consistently enforced across all roles'},
+      {csf:'DE.AE-02',n171:'03.14.06',n53:'SI-04',iso:'A.8.16',st:'miss',gap:'No user behavior analytics baseline; anomalous activity undetected'},
+      {csf:'RS.AN-03',n171:'03.06.01',n53:'IR-05',iso:'A.6.4',st:'part',gap:'Incident analysis does not include insider attribution steps'},
+    ],
+    ctx:{
+      1:'<div class="ctx-block-title">Insider threat — profile signals</div><div class="ctx-line">Privileged users with broad access represent highest exposure surface</div><div class="ctx-line">Poor offboarding and shared credentials are common structural enablers</div><div class="ctx-line">Trust-based culture may delay reporting of concerning behavior</div>',
+      2:'<div class="ctx-block-title">Insider threat emphasis</div><div class="ctx-line">Intent: disgruntled, coerced, or opportunistic insiders acting against organisational interests</div><div class="ctx-line">Opportunities: excessive access, poor offboarding, shared credentials, physical proximity</div><div class="ctx-line">Capabilities: data theft, sabotage, unauthorized access, credential sharing</div>',
+      3:'<div class="ctx-block-title">Insider threat emphasis</div><div class="ctx-line">Q1: CSF DE.CM-03 — is user behavior monitored for anomalous activity?</div><div class="ctx-line">Q3: 800-171 03.14.07 — insider threat awareness program required</div><div class="ctx-line">Q4: 800-53 PM-12 · AC-06 least privilege · SI-04 system monitoring</div>',
+      4:'<div class="ctx-block-title">Insider threat — chain mappings</div><div class="ctx-line">CSF DE.CM-03 → 800-171 03.14.07 → 800-53 PM-12 → ISO A.6.4</div><div class="ctx-line">CSF PR.AA-05 → 800-171 03.01.05 → 800-53 AC-06 → ISO A.8.2</div><div class="ctx-line">CSF DE.AE-02 → 800-171 03.14.06 → 800-53 SI-04 → ISO A.8.16</div>',
+      5:'<div class="ctx-block-title">Insider threat — Annex A domains</div><div class="ctx-line">A.6.4: disciplinary process rarely triggered from security monitoring outputs</div><div class="ctx-line">A.8.2: privileged access management inconsistent across roles</div><div class="ctx-line">A.8.16: behavioral baseline monitoring absent in most organisations</div>',
+      7:'<div class="ctx-block-title">Insider threat — local jurisdiction</div><div class="ctx-line">Quebec Law 25: behavioral monitoring of employees requires consent and proportionality assessment</div><div class="ctx-line">PIPEDA: collection of employee behavioral data must be justified under reasonable purpose test</div><div class="ctx-line">Local gap: insider threat program must balance Law 25 privacy obligations with PM-12 monitoring requirements</div>'
+    }
+  },
+  sup:{desc:'Current focus: third-party and supplier risk introducing threats via trusted relationships — spans A.5 Organizational · A.8 Technological',
+    p:{sector:'Any sector',juris:'Quebec / Canada',work:'Extended enterprise',threat:'Supply chain',reg:'Partial',cult:'Vendor trust assumed'},
+    gaps:[
+      {csf:'ID.RA-09',n171:'03.11.03',n53:'SA-12',iso:'A.5.19',st:'miss',gap:'No supplier security assessment or validation process'},
+      {csf:'ID.RA-09',n171:'03.11.03',n53:'SR-05',iso:'A.5.20',st:'miss',gap:'No vendor procurement security review criteria'},
+      {csf:'GV.SC-06',n171:'03.11.03',n53:'SA-09',iso:'A.5.21',st:'part',gap:'Third-party monitoring informal; no ongoing compliance verification'},
+      {csf:'PR.DS-06',n171:'03.13.08',n53:'SI-07',iso:'A.8.20',st:'miss',gap:'Software integrity verification not performed on supplier deliverables'},
+    ],
+    ctx:{
+      1:'<div class="ctx-block-title">Supply chain — profile signals</div><div class="ctx-line">Extended enterprise with multiple vendors increases attack surface significantly</div><div class="ctx-line">Vendor trust assumed rather than verified — common structural gap</div><div class="ctx-line">Law 25 Art. 18.3 requires PIA before sharing personal data with third parties</div>',
+      2:'<div class="ctx-block-title">Supply chain emphasis</div><div class="ctx-line">Intent: adversaries exploiting trusted third-party relationships to gain persistent access</div><div class="ctx-line">Opportunities: unvetted suppliers, software without integrity verification, shared credentials</div><div class="ctx-line">Capabilities: trojanized software, compromised update channels, malicious hardware</div>',
+      3:'<div class="ctx-block-title">Supply chain emphasis</div><div class="ctx-line">Q1: CSF ID.RA-09 — are supplier risks formally assessed and documented?</div><div class="ctx-line">Q3: 800-171 03.11.03 — supply chain risk management required</div><div class="ctx-line">Q4: 800-53 SA-12 · SR-05 · SI-07 software integrity verification</div>',
+      4:'<div class="ctx-block-title">Supply chain — chain mappings</div><div class="ctx-line">CSF ID.RA-09 → 800-171 03.11.03 → 800-53 SA-12 → ISO A.5.19</div><div class="ctx-line">CSF GV.SC-06 → 800-171 03.11.03 → 800-53 SA-09 → ISO A.5.21</div><div class="ctx-line">CSF PR.DS-06 → 800-171 03.13.08 → 800-53 SI-07 → ISO A.8.20</div>',
+      5:'<div class="ctx-block-title">Supply chain — Annex A domains</div><div class="ctx-line">A.5.19: supplier security limited to contractual clauses without operational validation</div><div class="ctx-line">A.5.21: third-party software security rarely assessed before deployment</div><div class="ctx-line">A.8.20: network filtering doesn\'t account for trusted supplier communication channels</div>',
+      7:'<div class="ctx-block-title">Supply chain — local jurisdiction</div><div class="ctx-line">Quebec Law 25: third parties processing personal data require contractual privacy protections</div><div class="ctx-line">Law 25 Art. 18.3: PIA required before sharing data with third parties</div><div class="ctx-line">Local gap: SA-12 must be extended to cover Law 25 data processing agreement obligations</div>'
+    }
+  },
+  reg:{desc:'Current focus: meeting legal obligations across Quebec Law 25, LRSSS, PIPEDA, and NIST frameworks',
+    p:{sector:'Any sector',juris:'Quebec, Canada',work:'Compliance team',threat:'Regulatory exposure',reg:'Gaps identified',cult:'Compliance-aware'},
+    gaps:[
+      {csf:'GV.OC-03',n171:'03.11.01',n53:'PL-01',iso:'A.5.31',st:'part',gap:'No formal legal/regulatory requirements register maintained'},
+      {csf:'GV.PO-01',n171:'03.11.01',n53:'PM-09',iso:'A.5.1',st:'miss',gap:'Information security policy not reviewed against Law 25 obligations'},
+      {csf:'ID.IM-01',n171:'03.12.04',n53:'CA-02',iso:'A.5.36',st:'miss',gap:'No improvement plan tracking regulatory gap closure over time'},
+      {csf:'RS.CO-02',n171:'03.06.02',n53:'IR-06',iso:'A.5.26',st:'miss',gap:'72hr breach notification process not documented per Law 25'},
+    ],
+    ctx:{
+      1:'<div class="ctx-block-title">Regulatory compliance — profile signals</div><div class="ctx-line">Quebec Law 25 partially implemented — PIA and breach notification gaps most common</div><div class="ctx-line">LRSSS (Loi 5) in force July 2024 — proactive incident reporting obligation new and underimplemented</div><div class="ctx-line">NIST frameworks do not address Quebec right to de-indexing or explicit consent standards</div>',
+      2:'<div class="ctx-block-title">Regulatory compliance emphasis</div><div class="ctx-line">Intent: regulatory bodies, auditors, or legal exposure from non-compliance</div><div class="ctx-line">Opportunities: undocumented processes, informal policies, missing breach notification procedures</div><div class="ctx-line">Capabilities: audit findings, regulatory penalties, reputational harm</div>',
+      3:'<div class="ctx-block-title">Regulatory compliance emphasis</div><div class="ctx-line">Q1: CSF GV.OC-03 — are all legal and regulatory requirements inventoried?</div><div class="ctx-line">Q3: 800-171 03.12.04 — system security plan and improvement actions required</div><div class="ctx-line">Q4: 800-53 PL-01 · PM-09 risk management strategy · CA-02 assessment</div>',
+      4:'<div class="ctx-block-title">Regulatory compliance — chain mappings</div><div class="ctx-line">CSF GV.OC-03 → 800-171 03.11.01 → 800-53 PL-01 → ISO A.5.31</div><div class="ctx-line">CSF RS.CO-02 → 800-171 03.06.02 → 800-53 IR-06 → ISO A.5.26</div><div class="ctx-line">CSF ID.IM-01 → 800-171 03.12.04 → 800-53 CA-02 → ISO A.5.36</div>',
+      5:'<div class="ctx-block-title">Regulatory compliance — Annex A domains</div><div class="ctx-line">A.5.31: legal and regulatory requirements rarely mapped comprehensively</div><div class="ctx-line">A.5.36: compliance with security policies aspirational not verified</div><div class="ctx-line">A.5.26: breach notification gaps common — Law 25 72hr requirement often undocumented</div>',
+      7:'<div class="ctx-block-title">Regulatory compliance — local jurisdiction</div><div class="ctx-line">Quebec Law 25: mandatory PIA, 72hr breach notification, privacy officer appointment</div><div class="ctx-line">LRSSS (Loi 5): proactive incident reporting obligation for anticipated breaches — exceeds NIST and ISO requirements</div><div class="ctx-line">Local gap: NIST frameworks do not address Quebec right to de-indexing or explicit consent standards</div>'
+    }
+  },
+  phy:{desc:'Current focus: controlling and monitoring physical access to sensitive workspaces and information — A.7 Physical controls primary',
+    p:{sector:'Any sector',juris:'Quebec, Canada',work:'On-site staff',threat:'Physical access',reg:'Partial',cult:'Open office common'},
+    gaps:[
+      {csf:'PR.IR-01',n171:'03.10.01',n53:'PE-02',iso:'A.7.2',st:'part',gap:'Physical access controls informal; no visitor log for sensitive areas'},
+      {csf:'DE.CM-09',n171:'03.10.06',n53:'PE-06',iso:'A.7.4',st:'miss',gap:'No physical monitoring of server rooms or sensitive work areas'},
+      {csf:'PR.PS-04',n171:'03.10.03',n53:'MP-06',iso:'A.7.14',st:'miss',gap:'Media sanitization process not documented or enforced'},
+      {csf:'PR.IR-02',n171:'03.10.02',n53:'PE-18',iso:'A.7.8',st:'part',gap:'Equipment siting policy exists but not enforced in shared workspaces'},
+    ],
+    ctx:{
+      1:'<div class="ctx-block-title">Physical security — profile signals</div><div class="ctx-line">Open office plans common in Quebec workplaces — natural clean desk and surveillance exposure</div><div class="ctx-line">Law 25 requires physical security of paper records containing personal information</div><div class="ctx-line">Shared facilities increase tailgating and unauthorized observation risk</div>',
+      2:'<div class="ctx-block-title">Physical security emphasis</div><div class="ctx-line">Intent: unauthorized access to sensitive spaces, equipment theft, observation of work</div><div class="ctx-line">Opportunities: unmonitored entry, shared workspaces, clean desk violations</div><div class="ctx-line">Capabilities: tailgating, physical surveillance, media theft, equipment tampering</div>',
+      3:'<div class="ctx-block-title">Physical security emphasis</div><div class="ctx-line">Q1: CSF PR.IR-01 — are physical access controls formally documented and enforced?</div><div class="ctx-line">Q3: 800-171 03.10.01 — physical access authorization required</div><div class="ctx-line">Q4: 800-53 PE-02 physical access · PE-06 monitoring · MP-06 media sanitization</div>',
+      4:'<div class="ctx-block-title">Physical security — chain mappings</div><div class="ctx-line">CSF PR.IR-01 → 800-171 03.10.01 → 800-53 PE-02 → ISO A.7.2</div><div class="ctx-line">CSF DE.CM-09 → 800-171 03.10.06 → 800-53 PE-06 → ISO A.7.4</div><div class="ctx-line">CSF PR.PS-04 → 800-171 03.10.03 → 800-53 MP-06 → ISO A.7.14</div>',
+      5:'<div class="ctx-block-title">Physical security — Annex A domains</div><div class="ctx-line">A.7.2: access controls often limited to badge readers with no audit trail</div><div class="ctx-line">A.7.4: monitoring gaps common in open-plan offices and shared facilities</div><div class="ctx-line">A.7.14: media sanitization rarely enforced for decommissioned equipment</div>',
+      7:'<div class="ctx-block-title">Physical security — local jurisdiction</div><div class="ctx-line">Quebec Law 25: physical security of paper records containing personal information explicitly required</div><div class="ctx-line">Local context: shared workspace regulations may impose specific access control obligations</div><div class="ctx-line">Local gap: PE-02 physical access controls must integrate with Law 25 personal information protection requirements</div>'
+    }
+  }
+};
+
+function stBadge(s){
+  if(s==='miss')return '<span class="badge b-miss">Missing</span>';
+  if(s==='part')return '<span class="badge b-part">Partial</span>';
+  return '<span class="badge b-yes">Met</span>';
+}
+
+function setCtx(k,btn){
+  const d=ctxData[k];
+  document.querySelectorAll('.cb').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('ctx-desc').textContent='Current focus: '+d.desc;
+  const p=d.p||{};
+  if(document.getElementById('p-sector')){
+    document.getElementById('p-sector').textContent=p.sector||'';
+    document.getElementById('p-juris').textContent=p.juris||'';
+    document.getElementById('p-work').textContent=p.work||'';
+    document.getElementById('p-threat').textContent=p.threat||'';
+    document.getElementById('p-reg').textContent=p.reg||'';
+    document.getElementById('p-cult').textContent=p.cult||'';
+  }
+  [1,2,3,4,5,7].forEach(n=>{
+    const el=document.getElementById('ctx'+n);
+    if(el&&d.ctx&&d.ctx[n])el.innerHTML=d.ctx[n];
+  });
+  const tb=document.getElementById('gapbody');
+  if(tb){
+    tb.innerHTML='';
+    (d.gaps||[]).forEach(g=>{
+      tb.innerHTML+=`<tr><td style="font-weight:500;color:var(--color-text-primary)">${g.csf}</td><td>${g.n171}</td><td>${g.n53}</td><td>${g.iso}</td><td>${stBadge(g.st)}</td><td>${g.gap}</td></tr>`;
+    });
+  }
+}
+
+function tog(n){
+  document.getElementById('body'+n).classList.toggle('open');
+  document.getElementById('chev'+n).classList.toggle('open');
+}
+
+window.onload=function(){
+  setCtx('ext',document.querySelectorAll('.cb')[0]);
+  tog(3);tog(6);
+};
+</script>
